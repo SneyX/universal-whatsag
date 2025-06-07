@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, Zap, Users, Cog, Server, DollarSign, BarChart3, Sparkles, Brain, Shield } from "lucide-react";
+import InfiniteScroll from "@/components/InfiniteScroll";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dev");
@@ -267,6 +268,45 @@ const Index = () => {
               }`}
             >
               {activeTab === "dev" ? "Crear mi MCP Agent" : "Comenzar ahora"}
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Partners/MCP Agents Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100/80 to-purple-100/80 rounded-full text-blue-700 text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4" />
+              Ecosistema MCP
+            </div>
+            
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+              Partners & MCP Agents
+            </h2>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
+              Conectamos con los mejores agentes MCP especializados para que tengas 
+              acceso a herramientas de última generación desde una sola conversación.
+            </p>
+          </div>
+
+          {/* Infinite Scroll Container */}
+          <div className="relative">
+            {/* Gradient overlays para efecto fade */}
+            <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-blue-50 to-transparent z-10"></div>
+            <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-purple-50 to-transparent z-10"></div>
+            
+            <InfiniteScroll />
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-gray-500 mb-6">
+              Y más integraciones llegando cada semana
+            </p>
+            <Button variant="outline" size="lg" className="px-8 py-4">
+              Ver todas las integraciones
             </Button>
           </div>
         </div>
