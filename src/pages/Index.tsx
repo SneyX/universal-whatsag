@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Zap, Users, Cog, Server, DollarSign, BarChart3, Sparkles, Brain, Shield, MessageSquare, Calendar, Calculator, FileText, Briefcase, GraduationCap } from "lucide-react";
+import { ArrowDown, Zap, Users, Cog, Server, DollarSign, BarChart3, Sparkles, Brain, Shield, MessageSquare, Calculator, FileText, Briefcase, GraduationCap } from "lucide-react";
 import InfiniteScroll from "@/components/InfiniteScroll";
 
 const Index = () => {
@@ -401,14 +402,14 @@ const Index = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
+      <section className="py-24 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium mb-8">
             <Zap className="w-4 h-4" />
             Únete a la revolución de la IA
           </div>
           
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
             ¿Listo para experimentar el futuro?
           </h2>
           
@@ -417,10 +418,10 @@ const Index = () => {
             Una conversación, infinitas posibilidades.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Button 
               size="lg" 
-              className="px-8 py-4 text-lg bg-white text-gray-900 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-300"
+              className="px-10 py-5 text-lg bg-white text-gray-900 hover:bg-gray-100 hover:text-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl"
               onClick={() => window.open('https://wa.me/1234567890?text=Hola%2C%20quiero%20probar%20Universal%20Bot', '_blank')}
             >
               <MessageSquare className="w-5 h-5 mr-2" />
@@ -429,33 +430,6 @@ const Index = () => {
             <p className="text-white/80 text-sm">
               Respuesta inmediata por WhatsApp
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Coming Soon Sections */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-            Más secciones en desarrollo...
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Partners MCP</h3>
-              <p className="text-gray-600">Grid animado de integraciones activas</p>
-            </div>
-            <div className="p-6 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Scrollytelling avanzado</h3>
-              <p className="text-gray-600">Animaciones interactivas en casos de uso</p>
-            </div>
-            <div className="p-6 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Pricing dinámico</h3>
-              <p className="text-gray-600">Planes personalizados según audiencia</p>
-            </div>
-            <div className="p-6 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">FAQ interactivo</h3>
-              <p className="text-gray-600">Preguntas frecuentes con búsqueda</p>
-            </div>
           </div>
         </div>
       </section>
