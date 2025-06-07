@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Zap, Users, Cog, Server, DollarSign, BarChart3, Sparkles, Brain, Shield } from "lucide-react";
+import { ArrowDown, Zap, Users, Cog, Server, DollarSign, BarChart3, Sparkles, Brain, Shield, MessageSquare, Calendar, Calculator, FileText, Briefcase, GraduationCap } from "lucide-react";
 import InfiniteScroll from "@/components/InfiniteScroll";
 
 const Index = () => {
@@ -46,6 +46,37 @@ const Index = () => {
       title: "Siempre actualizado",
       description: "Nuevas herramientas se integran automáticamente. Siempre tendrás acceso a lo más avanzado.",
       animation: "animate-fade-in delay-400"
+    }
+  ];
+
+  const useCases = [
+    {
+      icon: MessageSquare,
+      title: "Asistente Personal Inteligente",
+      description: "María, ejecutiva, necesita organizar su día. Universal Bot accede automáticamente a su calendario, email y tareas, sugiriendo la mejor agenda.",
+      audience: "Profesionales ocupados",
+      animation: "animate-fade-in"
+    },
+    {
+      icon: GraduationCap,
+      title: "Tutor Educativo Adaptativo",
+      description: "Carlos, estudiante de ingeniería, pregunta sobre cálculo. El bot selecciona la herramienta matemática adecuada y adapta la explicación a su nivel.",
+      audience: "Estudiantes y educadores",
+      animation: "animate-fade-in delay-200"
+    },
+    {
+      icon: Briefcase,
+      title: "Consultor de Negocios",
+      description: "Ana, emprendedora, necesita analizar su mercado. Universal Bot combina herramientas de investigación, análisis financiero y presentaciones automáticamente.",
+      audience: "Emprendedores y PYMES",
+      animation: "animate-fade-in delay-400"
+    },
+    {
+      icon: Calculator,
+      title: "Asistente Financiero Familiar",
+      description: "Pedro quiere planificar las vacaciones familiares. El bot calcula presupuestos, compara opciones y sincroniza con el calendario familiar.",
+      audience: "Familias y uso personal",
+      animation: "animate-fade-in delay-600"
     }
   ];
 
@@ -312,6 +343,96 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Use Cases Section */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100/80 to-purple-100/80 rounded-full text-blue-700 text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4" />
+              Casos de uso reales
+            </div>
+            
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+              Historias de éxito
+            </h2>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Descubre cómo Universal Bot transforma la manera en que las personas 
+              interactúan con la tecnología en su día a día.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {useCases.map((useCase, index) => {
+              const IconComponent = useCase.icon;
+              return (
+                <div 
+                  key={index}
+                  className={`bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 ${useCase.animation}`}
+                >
+                  <div className="flex items-start gap-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-3">
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          {useCase.title}
+                        </h3>
+                      </div>
+                      
+                      <p className="text-gray-600 leading-relaxed mb-4">
+                        {useCase.description}
+                      </p>
+                      
+                      <div className="inline-flex items-center px-3 py-1 bg-blue-50 rounded-full">
+                        <span className="text-sm text-blue-700 font-medium">
+                          {useCase.audience}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium mb-6">
+            <Zap className="w-4 h-4" />
+            Únete a la revolución de la IA
+          </div>
+          
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+            ¿Listo para experimentar el futuro?
+          </h2>
+          
+          <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-12">
+            Universal Bot está esperando para revolucionar tu manera de trabajar. 
+            Una conversación, infinitas posibilidades.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg" 
+              className="px-8 py-4 text-lg bg-white text-gray-900 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-300"
+              onClick={() => window.open('https://wa.me/1234567890?text=Hola%2C%20quiero%20probar%20Universal%20Bot', '_blank')}
+            >
+              <MessageSquare className="w-5 h-5 mr-2" />
+              Probar ahora
+            </Button>
+            <p className="text-white/80 text-sm">
+              Respuesta inmediata por WhatsApp
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Coming Soon Sections */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto text-center">
@@ -324,12 +445,16 @@ const Index = () => {
               <p className="text-gray-600">Grid animado de integraciones activas</p>
             </div>
             <div className="p-6 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Casos de uso</h3>
-              <p className="text-gray-600">Micro-historias con scrollytelling</p>
+              <h3 className="text-xl font-semibold mb-4">Scrollytelling avanzado</h3>
+              <p className="text-gray-600">Animaciones interactivas en casos de uso</p>
             </div>
             <div className="p-6 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-semibold mb-4">Pricing & FAQ</h3>
-              <p className="text-gray-600">Planes y preguntas frecuentes</p>
+              <h3 className="text-xl font-semibold mb-4">Pricing dinámico</h3>
+              <p className="text-gray-600">Planes personalizados según audiencia</p>
+            </div>
+            <div className="p-6 bg-gray-50 rounded-xl">
+              <h3 className="text-xl font-semibold mb-4">FAQ interactivo</h3>
+              <p className="text-gray-600">Preguntas frecuentes con búsqueda</p>
             </div>
           </div>
         </div>
