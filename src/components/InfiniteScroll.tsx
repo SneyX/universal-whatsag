@@ -1,15 +1,15 @@
-
-import React from 'react';
-import { 
-  Bot, 
-  Database, 
-  FileText, 
-  Image, 
-  Mail, 
-  Calendar, 
-  Calculator, 
-  MessageSquare, 
-  Search, 
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Bot,
+  Database,
+  FileText,
+  Image,
+  Mail,
+  Calendar,
+  Calculator,
+  MessageSquare,
+  Search,
   Music,
   Video,
   Code,
@@ -17,8 +17,8 @@ import {
   BookOpen,
   Heart,
   Globe,
-  Zap
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
 
 interface Partner {
   name: string;
@@ -43,7 +43,7 @@ const partners: Partner[] = [
   { name: "EduBot", icon: BookOpen, category: "Education" },
   { name: "HealthTrack", icon: Heart, category: "Health" },
   { name: "WebCrawl", icon: Globe, category: "Data" },
-  { name: "AutoFlow", icon: Zap, category: "Automation" }
+  { name: "AutoFlow", icon: Zap, category: "Automation" },
 ];
 
 const InfiniteScroll: React.FC = () => {
@@ -52,27 +52,58 @@ const InfiniteScroll: React.FC = () => {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="flex animate-scroll-infinite">
+      <motion.div
+        className="flex"
+        animate={{ x: [0, -50 + "%"] }}
+        transition={{
+          duration: 30,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        style={{ width: "200%" }}
+      >
         {duplicatedPartners.map((partner, index) => {
           const IconComponent = partner.icon;
           return (
-            <div
+            <motion.div
               key={`${partner.name}-${index}`}
-              className="flex-shrink-0 mx-8 flex flex-col items-center group hover:scale-105 transition-transform duration-300"
+              className="flex-shrink-0 mx-8 flex flex-col items-center group cursor-pointer"
+              whileHover={{
+                scale: 1.1,
+                y: -10,
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl flex items-center justify-center group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-colors duration-300 border border-gray-200/50">
+              <motion.div
+                className="w-16 h-16 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl flex items-center justify-center group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-colors duration-300 border border-gray-200/50"
+                whileHover={{
+                  rotate: [0, -10, 10, 0],
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                }}
+                transition={{ duration: 0.6 }}
+              >
                 <IconComponent className="w-8 h-8 text-gray-600 group-hover:text-blue-600 transition-colors duration-300" />
-              </div>
-              <span className="text-sm font-medium text-gray-700 mt-3 text-center opacity-75 group-hover:opacity-100 transition-opacity duration-300">
+              </motion.div>
+
+              <motion.span
+                className="text-sm font-medium text-gray-700 mt-3 text-center opacity-75 group-hover:opacity-100 transition-opacity duration-300"
+                initial={{ opacity: 0.75 }}
+                whileHover={{ opacity: 1 }}
+              >
                 {partner.name}
-              </span>
-              <span className="text-xs text-gray-500 mt-1 opacity-60">
+              </motion.span>
+
+              <motion.span
+                className="text-xs text-gray-500 mt-1 opacity-60 group-hover:opacity-80 transition-opacity duration-300"
+                initial={{ opacity: 0.6 }}
+                whileHover={{ opacity: 0.8 }}
+              >
                 {partner.category}
-              </span>
-            </div>
+              </motion.span>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 };
