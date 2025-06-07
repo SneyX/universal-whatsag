@@ -1,11 +1,52 @@
-
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Zap, Users, Cog } from "lucide-react";
+import { ArrowDown, Zap, Users, Cog, Server, DollarSign, BarChart3, Sparkles, Brain, Shield } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dev");
+
+  const devBenefits = [
+    {
+      icon: Server,
+      title: "Deploy sin complicaciones",
+      description: "Tu MCP Agent en producción en minutos. Nos encargamos de la infraestructura, escalado y monitoreo 24/7.",
+      animation: "animate-fade-in"
+    },
+    {
+      icon: DollarSign,
+      title: "Monetización automática",
+      description: "Sistema de facturación integrado. Cobra por uso, suscripciones o modelo freemium sin código adicional.",
+      animation: "animate-fade-in delay-200"
+    },
+    {
+      icon: BarChart3,
+      title: "Analytics incluidos",
+      description: "Dashboard completo con métricas de uso, rendimiento y revenue. Optimiza tu agente con datos reales.",
+      animation: "animate-fade-in delay-400"
+    }
+  ];
+
+  const userBenefits = [
+    {
+      icon: Brain,
+      title: "Inteligencia adaptativa",
+      description: "Universal Bot analiza tu solicitud y selecciona automáticamente la mejor herramienta disponible.",
+      animation: "animate-fade-in"
+    },
+    {
+      icon: Sparkles,
+      title: "Una conversación, infinitas herramientas",
+      description: "Accede a cientos de agentes especializados desde una sola interfaz. Sin cambiar de app.",
+      animation: "animate-fade-in delay-200"
+    },
+    {
+      icon: Shield,
+      title: "Siempre actualizado",
+      description: "Nuevas herramientas se integran automáticamente. Siempre tendrás acceso a lo más avanzado.",
+      animation: "animate-fade-in delay-400"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50">
@@ -163,24 +204,92 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Coming Soon Sections */}
+      {/* Benefits Section with Dynamic Content */}
       <section className="py-20 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+              {activeTab === "dev" ? "Beneficios para Desarrolladores" : "Beneficios para Usuarios"}
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {activeTab === "dev" 
+                ? "Enfócate en crear mientras nosotros manejamos toda la infraestructura y monetización"
+                : "Una experiencia fluida que se adapta a tus necesidades específicas"
+              }
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {(activeTab === "dev" ? devBenefits : userBenefits).map((benefit, index) => {
+              const IconComponent = benefit.icon;
+              return (
+                <div 
+                  key={index}
+                  className={`bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow duration-300 ${benefit.animation}`}
+                >
+                  <div className={`w-16 h-16 rounded-2xl mb-6 flex items-center justify-center ${
+                    activeTab === "dev" 
+                      ? "bg-gradient-to-br from-blue-500 to-purple-500" 
+                      : "bg-gradient-to-br from-purple-500 to-blue-500"
+                  }`}>
+                    <IconComponent className="w-8 h-8 text-white" />
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    {benefit.title}
+                  </h3>
+                  
+                  <p className="text-gray-600 leading-relaxed">
+                    {benefit.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* CTA Section within Benefits */}
+          <div className="text-center mt-16">
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6 ${
+              activeTab === "dev" 
+                ? "bg-blue-100/80 text-blue-700" 
+                : "bg-purple-100/80 text-purple-700"
+            }`}>
+              <Sparkles className="w-4 h-4" />
+              {activeTab === "dev" ? "Empieza a monetizar hoy" : "Pruébalo gratis"}
+            </div>
+            
+            <Button 
+              size="lg" 
+              className={`px-8 py-4 text-lg ${
+                activeTab === "dev"
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              }`}
+            >
+              {activeTab === "dev" ? "Crear mi MCP Agent" : "Comenzar ahora"}
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Coming Soon Sections */}
+      <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
             Más secciones en desarrollo...
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 bg-white rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold mb-4">Beneficios específicos</h3>
-              <p className="text-gray-600">Dev vs User benefits con animaciones</p>
-            </div>
-            <div className="p-6 bg-white rounded-xl shadow-sm">
+            <div className="p-6 bg-gray-50 rounded-xl">
               <h3 className="text-xl font-semibold mb-4">Partners MCP</h3>
               <p className="text-gray-600">Grid animado de integraciones activas</p>
             </div>
-            <div className="p-6 bg-white rounded-xl shadow-sm">
+            <div className="p-6 bg-gray-50 rounded-xl">
               <h3 className="text-xl font-semibold mb-4">Casos de uso</h3>
               <p className="text-gray-600">Micro-historias con scrollytelling</p>
+            </div>
+            <div className="p-6 bg-gray-50 rounded-xl">
+              <h3 className="text-xl font-semibold mb-4">Pricing & FAQ</h3>
+              <p className="text-gray-600">Planes y preguntas frecuentes</p>
             </div>
           </div>
         </div>

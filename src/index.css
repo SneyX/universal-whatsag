@@ -149,6 +149,19 @@
   animation: slide-up 0.8s ease-out;
 }
 
+/* Delay classes for staggered animations */
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-600 {
+  animation-delay: 600ms;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
