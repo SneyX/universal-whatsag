@@ -97,8 +97,12 @@
     @apply border-border;
   }
 
+  html {
+    @apply font-acid-grotesk;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-acid-grotesk;
   }
 }
 

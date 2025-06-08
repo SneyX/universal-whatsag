@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'acid-grotesk': ['Inter', 'system-ui', 'sans-serif'],
+				// When you have access to Acid Grotesk font files, replace Inter with 'Acid Grotesk'
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

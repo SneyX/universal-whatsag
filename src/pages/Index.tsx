@@ -1,746 +1,571 @@
-import { useState } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowDown,
-  Zap,
-  Users,
-  Cog,
-  Server,
-  DollarSign,
-  BarChart3,
-  Sparkles,
-  Brain,
-  Shield,
-  MessageSquare,
-  Calculator,
-  FileText,
-  Briefcase,
-  GraduationCap,
-} from "lucide-react";
-import InfiniteScroll from "@/components/InfiniteScroll";
+import { useState, useRef, useEffect } from "react";
+import { Volume2, VolumeX, Minus, Plus } from "lucide-react";
 
-// Animation variants for consistent story scrolling
-const fadeInUp = {
-  hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.25, 0.25, 0.75],
-    },
-  },
-};
+export default function Index() {
+  const [volume, setVolume] = useState(0.3); // Default volume at 30%
+  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true); // Playing by default
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-const staggerContainer = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-};
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted]);
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
-};
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
 
-const Index = () => {
-  const [activeTab, setActiveTab] = useState("dev");
-  const { scrollY } = useScroll();
+  const adjustVolume = (increment: number) => {
+    const newVolume = Math.max(0, Math.min(1, volume + increment));
+    setVolume(newVolume);
+    if (newVolume > 0) {
+      setIsMuted(false);
+    }
+  };
 
-  // Parallax transforms for background elements
-  const yBg1 = useTransform(scrollY, [0, 1000], [0, -100]);
-  const yBg2 = useTransform(scrollY, [0, 1000], [0, -200]);
-  const yBg3 = useTransform(scrollY, [0, 1000], [0, -50]);
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
-  const devBenefits = [
-    {
-      icon: Server,
-      title: "Deploy sin complicaciones",
-      description:
-        "Tu MCP Agent en producción en minutos. Nos encargamos de la infraestructura, escalado y monitoreo 24/7.",
-    },
-    {
-      icon: DollarSign,
-      title: "Monetización automática",
-      description:
-        "Sistema de facturación integrado. Cobra por uso, suscripciones o modelo freemium sin código adicional.",
-    },
-    {
-      icon: BarChart3,
-      title: "Analytics incluidos",
-      description:
-        "Dashboard completo con métricas de uso, rendimiento y revenue. Optimiza tu agente con datos reales.",
-    },
-  ];
-
-  const userBenefits = [
-    {
-      icon: Brain,
-      title: "Inteligencia adaptativa",
-      description:
-        "Universal Bot analiza tu solicitud y selecciona automáticamente la mejor herramienta disponible.",
-    },
-    {
-      icon: Sparkles,
-      title: "Una conversación, infinitas herramientas",
-      description:
-        "Accede a cientos de agentes especializados desde una sola interfaz. Sin cambiar de app.",
-    },
-    {
-      icon: Shield,
-      title: "Siempre actualizado",
-      description:
-        "Nuevas herramientas se integran automáticamente. Siempre tendrás acceso a lo más avanzado.",
-    },
-  ];
-
-  const useCases = [
-    {
-      icon: MessageSquare,
-      title: "Asistente Personal Inteligente",
-      description:
-        "María, ejecutiva, necesita organizar su día. Universal Bot accede automáticamente a su calendario, email y tareas, sugiriendo la mejor agenda.",
-      audience: "Profesionales ocupados",
-    },
-    {
-      icon: GraduationCap,
-      title: "Tutor Educativo Adaptativo",
-      description:
-        "Carlos, estudiante de ingeniería, pregunta sobre cálculo. El bot selecciona la herramienta matemática adecuada y adapta la explicación a su nivel.",
-      audience: "Estudiantes y educadores",
-    },
-    {
-      icon: Briefcase,
-      title: "Consultor de Negocios",
-      description:
-        "Ana, emprendedora, necesita analizar su mercado. Universal Bot combina herramientas de investigación, análisis financiero y presentaciones automáticamente.",
-      audience: "Emprendedores y PYMES",
-    },
-    {
-      icon: Calculator,
-      title: "Asistente Financiero Familiar",
-      description:
-        "Pedro quiere planificar las vacaciones familiares. El bot calcula presupuestos, compara opciones y sincroniza con el calendario familiar.",
-      audience: "Familias y uso personal",
-    },
-  ];
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50 overflow-x-hidden">
-      {/* Hero Section with Tab Switcher */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-        {/* Animated Background Elements */}
-        <motion.div
-          className="absolute inset-0 overflow-hidden"
-          style={{ y: yBg1 }}
-        >
-          <motion.div
-            className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-          <motion.div
-            className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-purple-200/30 rounded-full blur-3xl"
-            style={{ y: yBg2 }}
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.4, 0.2],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2,
-            }}
-          />
-          <motion.div
-            className="absolute top-1/2 right-1/3 w-32 h-32 bg-orange-200/30 rounded-full blur-2xl"
-            style={{ y: yBg3 }}
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.4, 0.6, 0.4],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 4,
-            }}
-          />
-        </motion.div>
-
-        {/* Content Container */}
-        <motion.div
-          className="relative z-10 max-w-6xl mx-auto text-center"
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-        >
-          {/* Tab Switcher */}
-          <motion.div variants={fadeInUp}>
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="mb-12"
-            >
-              <TabsList className="grid w-fit mx-auto grid-cols-2 mb-8 bg-white/80 backdrop-blur-sm shadow-lg">
-                <TabsTrigger
-                  value="dev"
-                  className="flex items-center gap-2 px-6 py-3 transition-all duration-300"
-                >
-                  <Cog className="w-4 h-4" />
-                  Desarrolladores
-                </TabsTrigger>
-                <TabsTrigger
-                  value="user"
-                  className="flex items-center gap-2 px-6 py-3 transition-all duration-300"
-                >
-                  <Users className="w-4 h-4" />
-                  Usuarios Finales
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Dev Content */}
-              <TabsContent value="dev">
-                <motion.div
-                  className="space-y-8"
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <motion.div
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100/80 rounded-full text-blue-700 text-sm font-medium"
-                    variants={scaleIn}
-                  >
-                    <Zap className="w-4 h-4" />
-                    Para Desarrolladores
-                  </motion.div>
-
-                  <motion.h1
-                    className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight"
-                    variants={fadeInUp}
-                  >
-                    Despliega tu
-                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 bg-clip-text text-transparent">
-                      {" "}
-                      MCP Agent
-                    </span>
-                    <br />
-                    sin complicaciones
-                  </motion.h1>
-
-                  <motion.p
-                    className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
-                    variants={fadeInUp}
-                  >
-                    Universal Bot maneja toda la infraestructura, hosting y
-                    facturación de tu agente MCP. Tú enfócate en crear, nosotros
-                    nos encargamos del resto.
-                  </motion.p>
-
-                  <motion.div
-                    className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12"
-                    variants={fadeInUp}
-                  >
-                    <Button
-                      size="lg"
-                      className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300"
-                    >
-                      Empezar gratis
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="px-8 py-4 text-lg transform hover:scale-105 transition-all duration-300"
-                    >
-                      Ver documentación
-                    </Button>
-                  </motion.div>
-                </motion.div>
-              </TabsContent>
-
-              {/* User Content */}
-              <TabsContent value="user">
-                <motion.div
-                  className="space-y-8"
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <motion.div
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100/80 rounded-full text-purple-700 text-sm font-medium"
-                    variants={scaleIn}
-                  >
-                    <Users className="w-4 h-4" />
-                    Para Usuarios Finales
-                  </motion.div>
-
-                  <motion.h1
-                    className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight"
-                    variants={fadeInUp}
-                  >
-                    Tu asistente
-                    <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-orange-500 bg-clip-text text-transparent">
-                      {" "}
-                      universal
-                    </span>
-                    <br />
-                    inteligente
-                  </motion.h1>
-
-                  <motion.p
-                    className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
-                    variants={fadeInUp}
-                  >
-                    Universal Bot elige automáticamente la mejor herramienta
-                    para cada tarea. Una sola conversación, infinitas
-                    posibilidades.
-                  </motion.p>
-
-                  <motion.div
-                    className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12"
-                    variants={fadeInUp}
-                  >
-                    <Button
-                      size="lg"
-                      className="px-8 py-4 text-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300"
-                    >
-                      Pruébalo gratis
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="px-8 py-4 text-lg transform hover:scale-105 transition-all duration-300"
-                    >
-                      Ver casos de uso
-                    </Button>
-                  </motion.div>
-                </motion.div>
-              </TabsContent>
-            </Tabs>
-          </motion.div>
-        </motion.div>
-
-        {/* Animated Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{
-            y: [0, 10, 0],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <div
-            className="flex flex-col items-center text-gray-500 cursor-pointer hover:text-gray-700 transition-colors"
-            onClick={() =>
-              window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
-            }
-          >
-            <span className="text-sm mb-2">Descubre más</span>
-            <ArrowDown className="w-5 h-5" />
-          </div>
-        </motion.div>
-      </section>
-
-      {/* What is Universal Bot Section */}
-      <motion.section
-        className="py-20 px-4 bg-white"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Audio */}
+      <audio
+        ref={audioRef}
+        loop
+        autoPlay
+        preload="auto"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
       >
-        <div className="max-w-6xl mx-auto">
-          <motion.div className="text-center mb-16" variants={fadeInUp}>
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-              ¿Qué es Universal Bot?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Un orquestador inteligente de herramientas MCP que conecta
-              desarrolladores y usuarios con las mejores soluciones para cada
-              necesidad específica.
-            </p>
-          </motion.div>
+        <source src="/background-sound.mp3" type="audio/mpeg" />
+        {/* Fallback for browsers that don't support the audio element */}
+        Your browser does not support the audio element.
+      </audio>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div className="space-y-6" variants={fadeInUp}>
-              <div className="space-y-4">
-                <h3 className="text-2xl font-semibold text-gray-900">
-                  Más que un motor de orquestación tradicional
-                </h3>
-                <p className="text-gray-600 text-lg">
-                  Universal Bot utiliza el protocolo MCP (Model Context
-                  Protocol) para crear un ecosistema donde cada herramienta
-                  especializada puede ser descubierta y utilizada de manera
-                  inteligente según el contexto de cada conversación.
-                </p>
-              </div>
-
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                variants={staggerContainer}
-              >
-                <motion.div
-                  className="p-4 bg-blue-50 rounded-lg transform hover:scale-105 transition-all duration-300"
-                  variants={scaleIn}
-                >
-                  <h4 className="font-semibold text-blue-900 mb-2">
-                    Para Desarrolladores
-                  </h4>
-                  <p className="text-blue-700 text-sm">
-                    Deploy, hosting y monetización automática de tus agentes MCP
-                  </p>
-                </motion.div>
-                <motion.div
-                  className="p-4 bg-purple-50 rounded-lg transform hover:scale-105 transition-all duration-300"
-                  variants={scaleIn}
-                >
-                  <h4 className="font-semibold text-purple-900 mb-2">
-                    Para Usuarios
-                  </h4>
-                  <p className="text-purple-700 text-sm">
-                    Acceso inteligente a todas las herramientas desde una
-                    conversación
-                  </p>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              className="relative"
-              variants={scaleIn}
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 h-96 flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <motion.div
-                    className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-                    animate={{
-                      rotate: [0, 360],
-                    }}
-                    transition={{
-                      duration: 20,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  >
-                    <Zap className="w-12 h-12 text-white" />
-                  </motion.div>
-                  <p className="text-lg font-medium">Diagrama interactivo</p>
-                  <p className="text-sm">Próximamente</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Benefits Section with Dynamic Content */}
-      <motion.section
-        className="py-20 px-4 bg-gray-50"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={staggerContainer}
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(/background.png)',
+        }}
       >
-        <div className="max-w-6xl mx-auto">
-          <motion.div className="text-center mb-16" variants={fadeInUp}>
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-              {activeTab === "dev"
-                ? "Beneficios para Desarrolladores"
-                : "Beneficios para Usuarios"}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {activeTab === "dev"
-                ? "Enfócate en crear mientras nosotros manejamos toda la infraestructura y monetización"
-                : "Una experiencia fluida que se adapta a tus necesidades específicas"}
-            </p>
-          </motion.div>
+        {/* Subtle Gradient Overlay - lighter to preserve background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30" />
+      </div>
 
+            {/* Navigation */}
+      <nav className="relative z-10 flex items-center justify-between px-4 py-4 md:px-12 md:py-8">
+        {/* Desktop Audio Controls - Top Left */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="group relative hidden md:block"
+        >
+          {/* Invisible hover bridge to prevent menu closing */}
+          <div className="absolute inset-0 w-[280px] h-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto" />
+          
+          {/* Main Audio Icon */}
           <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            variants={staggerContainer}
+            className="relative z-10 w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {(activeTab === "dev" ? devBenefits : userBenefits).map(
-              (benefit, index) => {
-                const IconComponent = benefit.icon;
-                return (
-                  <motion.div
-                    key={index}
-                    className="bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                    variants={fadeInUp}
-                    whileHover={{ y: -5 }}
-                  >
-                    <motion.div
-                      className={`w-16 h-16 rounded-2xl mb-6 flex items-center justify-center ${
-                        activeTab === "dev"
-                          ? "bg-gradient-to-br from-blue-500 to-purple-500"
-                          : "bg-gradient-to-br from-purple-500 to-blue-500"
-                      }`}
-                      whileHover={{
-                        scale: 1.1,
-                        rotate: 5,
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <IconComponent className="w-8 h-8 text-white" />
-                    </motion.div>
-
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                      {benefit.title}
-                    </h3>
-
-                    <p className="text-gray-600 leading-relaxed">
-                      {benefit.description}
-                    </p>
-                  </motion.div>
-                );
-              }
+            {isPlaying ? (
+              <Volume2 className="w-5 h-5 text-white" />
+            ) : (
+              <VolumeX className="w-5 h-5 text-white" />
             )}
           </motion.div>
 
-          {/* CTA Section within Benefits */}
-          <motion.div className="text-center mt-16" variants={fadeInUp}>
-            <motion.div
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6 ${
-                activeTab === "dev"
-                  ? "bg-blue-100/80 text-blue-700"
-                  : "bg-purple-100/80 text-purple-700"
-              }`}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Sparkles className="w-4 h-4" />
-              {activeTab === "dev"
-                ? "Empieza a monetizar hoy"
-                : "Pruébalo gratis"}
-            </motion.div>
+          {/* Expanded Controls on Hover */}
+          <div className="absolute left-10 ml-1 top-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-2xl opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 scale-90 group-hover:scale-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-20">
+            <div className="flex items-center space-x-2">
+              {/* Play/Pause */}
+              <motion.button
+                onClick={togglePlay}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-1.5 text-white transition-all duration-200"
+              >
+                {isPlaying ? (
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                )}
+              </motion.button>
+
+              {/* Volume Down */}
+              <motion.button
+                onClick={() => adjustVolume(-0.1)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-1.5 text-white transition-all duration-200"
+              >
+                <Minus className="w-2.5 h-2.5" />
+              </motion.button>
+
+              {/* Mute Toggle */}
+              <motion.button
+                onClick={toggleMute}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-1.5 text-white transition-all duration-200"
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-3 h-3" />
+                ) : (
+                  <Volume2 className="w-3 h-3" />
+                )}
+              </motion.button>
+
+              {/* Volume Up */}
+              <motion.button
+                onClick={() => adjustVolume(0.1)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-1.5 text-white transition-all duration-200"
+              >
+                <Plus className="w-2.5 h-2.5" />
+              </motion.button>
+
+              {/* Volume Indicator */}
+              <div className="flex items-center space-x-1 ml-2">
+                <div className="text-white/70 text-xs font-light min-w-[24px]">
+                  {isMuted ? "0%" : `${Math.round(volume * 100)}%`}
+                </div>
+                <div className="w-12 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-white/70 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: isMuted ? 0 : `${volume * 100}%` }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Mobile Audio Controls - Simplified */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="md:hidden"
+        >
+          <motion.button
+            onClick={togglePlay}
+            whileTap={{ scale: 0.9 }}
+            className="w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-lg"
+          >
+            {isPlaying ? (
+              <Volume2 className="w-5 h-5 text-white" />
+            ) : (
+              <VolumeX className="w-5 h-5 text-white" />
+            )}
+          </motion.button>
+        </motion.div>
+
+        {/* Desktop Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="hidden md:flex items-center space-x-8"
+        >
+          <a href="#how-it-works" className="text-white/90 hover:text-white transition-colors backdrop-blur-sm px-3 py-1 rounded-md">
+            How It Works
+          </a>
+          <a href="#use-cases" className="text-white/90 hover:text-white transition-colors backdrop-blur-sm px-3 py-1 rounded-md">
+            Use Cases
+          </a>
+          <a href="#pricing" className="text-white/90 hover:text-white transition-colors backdrop-blur-sm px-3 py-1 rounded-md">
+            Pricing
+          </a>
+          <a href="#research" className="text-white/90 hover:text-white transition-colors backdrop-blur-sm px-3 py-1 rounded-md">
+            Research Feed
+          </a>
+        </motion.div>
+
+        {/* Mobile Menu Button */}
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          onClick={toggleMobileMenu}
+          className="md:hidden relative z-30 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full p-3 text-white"
+        >
+          <motion.div
+            animate={{ rotate: isMobileMenuOpen ? 45 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isMobileMenuOpen ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </motion.div>
+        </motion.button>
+      </nav>
+
+      {/* Mobile Navigation Menu */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ 
+          opacity: isMobileMenuOpen ? 1 : 0,
+          y: isMobileMenuOpen ? 0 : -20,
+          pointerEvents: isMobileMenuOpen ? "auto" : "none"
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="md:hidden fixed top-20 left-4 right-4 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl"
+      >
+        <div className="p-6 space-y-4">
+          <a 
+            href="#how-it-works" 
+            className="block text-white/90 hover:text-white transition-colors py-3 px-4 rounded-lg hover:bg-white/10"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            How It Works
+          </a>
+          <a 
+            href="#use-cases" 
+            className="block text-white/90 hover:text-white transition-colors py-3 px-4 rounded-lg hover:bg-white/10"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Use Cases
+          </a>
+          <a 
+            href="#pricing" 
+            className="block text-white/90 hover:text-white transition-colors py-3 px-4 rounded-lg hover:bg-white/10"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Pricing
+          </a>
+          <a 
+            href="#research" 
+            className="block text-white/90 hover:text-white transition-colors py-3 px-4 rounded-lg hover:bg-white/10"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Research Feed
+          </a>
+          
+          {/* Mobile Audio Controls */}
+          <div className="border-t border-white/20 pt-4 mt-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-white/70 text-sm">Audio Controls</span>
+              <div className="text-white/70 text-xs">
+                {isMuted ? "0%" : `${Math.round(volume * 100)}%`}
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <motion.button
+                onClick={togglePlay}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-2 text-white transition-all duration-200"
+              >
+                {isPlaying ? (
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                )}
+              </motion.button>
+
+              <motion.button
+                onClick={() => adjustVolume(-0.1)}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-2 text-white transition-all duration-200"
+              >
+                <Minus className="w-3 h-3" />
+              </motion.button>
+
+              <motion.button
+                onClick={toggleMute}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-2 text-white transition-all duration-200"
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-4 h-4" />
+                ) : (
+                  <Volume2 className="w-4 h-4" />
+                )}
+              </motion.button>
+
+              <motion.button
+                onClick={() => adjustVolume(0.1)}
+                whileTap={{ scale: 0.9 }}
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full p-2 text-white transition-all duration-200"
+              >
+                <Plus className="w-3 h-3" />
+              </motion.button>
+
+              <div className="flex-1 ml-3">
+                <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-white/70 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: isMuted ? 0 : `${volume * 100}%` }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+            {/* Main Content - Positioned to avoid center */}
+      <div className="relative z-10 min-h-[calc(100vh-120px)] flex flex-col justify-between md:block">
+        {/* Top Content - Mobile Stacked, Desktop Positioned */}
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mt-6 mx-4 md:absolute md:top-20 md:left-12 md:right-auto md:mt-0 md:mx-0 max-w-full md:max-w-md lg:max-w-lg"
+        >
+          <div className="bg-black/20 backdrop-blur-md rounded-2xl p-4 md:p-6 lg:p-8 border border-white/10 shadow-2xl">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-3 md:mb-4 leading-tight">
+              Universal WhatsAg
+            </h1>
+            
+            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-4 md:mb-6 font-light leading-relaxed">
+              Where Simplicity Meets Power.
+            </p>
+
+            <p className="text-xs sm:text-sm md:text-base text-white/80 mb-6 md:mb-8 leading-relaxed">
+              Real transformation doesn't start with complexity – it starts with connection. 
+              One chat that grows with you. Personalized, private, and always available.
+            </p>
 
             <Button
               size="lg"
-              className={`px-8 py-4 text-lg transform hover:scale-105 transition-all duration-300 ${
-                activeTab === "dev"
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-              }`}
+              className="bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg hover:shadow-xl text-sm md:text-base w-full md:w-auto"
             >
-              {activeTab === "dev" ? "Crear mi MCP Agent" : "Comenzar ahora"}
+              Start Exploring
             </Button>
-          </motion.div>
-        </div>
-      </motion.section>
+          </div>
+        </motion.div>
 
-      {/* Partners/MCP Agents Section */}
-      <motion.section
-        className="py-20 px-4 bg-gradient-to-r from-blue-50 to-purple-50"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
-      >
-        <div className="max-w-6xl mx-auto">
-          <motion.div className="text-center mb-16" variants={fadeInUp}>
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100/80 to-purple-100/80 rounded-full text-blue-700 text-sm font-medium mb-6"
-              whileHover={{ scale: 1.05 }}
-            >
-              <Sparkles className="w-4 h-4" />
-              Ecosistema MCP
-            </motion.div>
-
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-              Partners & MCP Agents
-            </h2>
-
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
-              Conectamos con los mejores agentes MCP especializados para que
-              tengas acceso a herramientas de última generación desde una sola
-              conversación.
+        {/* Bottom Content - Mobile Stacked, Desktop Positioned */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-6 mb-20 mx-4 md:absolute md:bottom-16 md:right-12 md:left-auto md:mt-0 md:mb-0 md:mx-0 max-w-full md:max-w-sm lg:max-w-md"
+        >
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/10 shadow-2xl">
+            <p className="text-white/90 text-xs sm:text-sm md:text-base italic leading-relaxed mb-3 md:mb-4">
+              "Universal WhatsAg is your companion for seamless living. 
+              A calm interface to simplify tasks, automate your day, and understand your needs."
             </p>
-          </motion.div>
-
-          {/* Infinite Scroll Container */}
-          <motion.div className="relative" variants={fadeInUp}>
-            {/* Gradient overlays para efecto fade */}
-            <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-blue-50 to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-purple-50 to-transparent z-10"></div>
-
-            <InfiniteScroll />
-          </motion.div>
-
-          <motion.div className="text-center mt-12" variants={fadeInUp}>
-            <p className="text-gray-500 mb-6">
-              Y más integraciones llegando cada semana
+            <p className="text-white/70 text-xs md:text-sm">
+              Less friction. More freedom.
             </p>
-            <Button
-              variant="outline"
-              size="lg"
-              className="px-8 py-4 transform hover:scale-105 transition-all duration-300"
-            >
-              Ver todas las integraciones
-            </Button>
-          </motion.div>
-        </div>
-      </motion.section>
+          </div>
+        </motion.div>
+      </div>
 
-      {/* Use Cases Section */}
-      <motion.section
-        className="py-20 px-4 bg-white"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={staggerContainer}
+            {/* Bottom Footer */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.8 }}
+        className="absolute bottom-2 md:bottom-4 left-0 right-0 px-4 md:px-12 z-10"
       >
-        <div className="max-w-6xl mx-auto">
-          <motion.div className="text-center mb-16" variants={fadeInUp}>
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100/80 to-purple-100/80 rounded-full text-blue-700 text-sm font-medium mb-6"
-              whileHover={{ scale: 1.05 }}
-            >
-              <Sparkles className="w-4 h-4" />
-              Casos de uso reales
-            </motion.div>
-
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-              Historias de éxito
-            </h2>
-
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Descubre cómo Universal Bot transforma la manera en que las
-              personas interactúan con la tecnología en su día a día.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid md:grid-cols-2 gap-8"
-            variants={staggerContainer}
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+          <motion.p 
+            className="text-white/90 text-xs sm:text-sm md:text-base font-light text-center md:text-left"
+            whileHover={{ scale: 1.02 }}
           >
-            {useCases.map((useCase, index) => {
-              const IconComponent = useCase.icon;
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 transform hover:scale-105"
-                  variants={fadeInUp}
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="flex items-start gap-6">
-                    <motion.div
-                      className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center flex-shrink-0"
-                      whileHover={{
-                        scale: 1.1,
-                        rotate: 5,
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <IconComponent className="w-8 h-8 text-white" />
-                    </motion.div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-3">
-                        <h3 className="text-xl font-semibold text-gray-900">
-                          {useCase.title}
-                        </h3>
-                      </div>
-
-                      <p className="text-gray-600 leading-relaxed mb-4">
-                        {useCase.description}
-                      </p>
-
-                      <div className="inline-flex items-center px-3 py-1 bg-blue-50 rounded-full">
-                        <span className="text-sm text-blue-700 font-medium">
-                          {useCase.audience}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Final CTA Section */}
-      <motion.section
-        className="py-24 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerContainer}
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium mb-8"
-            variants={scaleIn}
-            whileHover={{ scale: 1.05 }}
-          >
-            <Zap className="w-4 h-4" />
-            Únete a la revolución de la IA
-          </motion.div>
-
-          <motion.h2
-            className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight"
-            variants={fadeInUp}
-          >
-            ¿Listo para experimentar el futuro?
-          </motion.h2>
-
-          <motion.p
-            className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-12"
-            variants={fadeInUp}
-          >
-            Universal Bot está esperando para revolucionar tu manera de
-            trabajar. Una conversación, infinitas posibilidades.
+            Clarity begins with a great assistant.
           </motion.p>
 
-          <motion.div
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-            variants={fadeInUp}
-          >
-            <Button
-              size="lg"
-              className="px-10 py-5 text-lg bg-white text-gray-900 hover:bg-gray-100 hover:text-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-              onClick={() =>
-                window.open(
-                  "https://wa.me/1234567890?text=Hola%2C%20quiero%20probar%20Universal%20Bot",
-                  "_blank"
-                )
-              }
-            >
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Probar ahora
-            </Button>
-            <p className="text-white/80 text-sm">
-              Respuesta inmediata por WhatsApp
-            </p>
-          </motion.div>
+          <p className="text-white/60 text-xs md:text-sm text-center">
+            Universal WhatsAg ©2025
+          </p>
         </div>
-      </motion.section>
+      </motion.div>
+
+      {/* Enhanced floating particles with shiny effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Regular floating particles */}
+        {[...Array(25)].map((_, i) => (
+          <motion.div
+            key={`regular-${i}`}
+            className="absolute w-0.5 h-0.5 bg-white/30 rounded-full"
+            initial={{
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+            }}
+            animate={{
+              y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)],
+              x: [null, Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200)],
+              opacity: [0.3, 0.7, 0.3],
+            }}
+            transition={{
+              duration: Math.random() * 20 + 15,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+
+        {/* Medium particles */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={`medium-${i}`}
+            className="absolute w-1 h-1 bg-white/25 rounded-full"
+            initial={{
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+            }}
+            animate={{
+              y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)],
+              x: [null, Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200)],
+              scale: [1, 1.5, 1],
+              opacity: [0.2, 0.6, 0.2],
+            }}
+            transition={{
+              duration: Math.random() * 25 + 20,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+
+        {/* Shiny glowing particles */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={`shiny-${i}`}
+            className="absolute rounded-full"
+            style={{
+              width: Math.random() * 3 + 2 + 'px',
+              height: Math.random() * 3 + 2 + 'px',
+              background: `radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, transparent 100%)`,
+              boxShadow: '0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3)',
+            }}
+            initial={{
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+            }}
+            animate={{
+              y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)],
+              x: [null, Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200)],
+              scale: [0.5, 1.2, 0.5],
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: Math.random() * 12 + 8,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+
+        {/* Super bright accent particles */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`bright-${i}`}
+            className="absolute rounded-full"
+            style={{
+              width: '4px',
+              height: '4px',
+              background: `radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.6) 30%, rgba(135,206,250,0.4) 70%, transparent 100%)`,
+              boxShadow: '0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(135,206,250,0.4), 0 0 45px rgba(135,206,250,0.2)',
+            }}
+            initial={{
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+            }}
+            animate={{
+              y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)],
+              x: [null, Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200)],
+              scale: [0.3, 1.5, 0.3],
+              opacity: [0.6, 1, 0.6],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: Math.random() * 15 + 10,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+
+        {/* Twinkling star-like particles */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`star-${i}`}
+            className="absolute"
+            style={{
+              width: '2px',
+              height: '2px',
+            }}
+            initial={{
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+            }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "easeInOut",
+              delay: Math.random() * 5,
+            }}
+          >
+            <div 
+              className="w-full h-full bg-white rounded-full"
+              style={{
+                boxShadow: '0 0 8px rgba(255,255,255,0.8), 0 0 16px rgba(255,255,255,0.4)',
+              }}
+            />
+            {/* Cross-shaped twinkle effect */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-4 h-0.5 bg-white/60 rounded-full blur-sm" />
+              <div className="absolute w-0.5 h-4 bg-white/60 rounded-full blur-sm" />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      
     </div>
   );
-};
-
-export default Index;
+}
