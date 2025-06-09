@@ -1,14 +1,24 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 import { Volume2, VolumeX, Minus, Plus } from "lucide-react";
 
 export default function Index() {
-  const [volume, setVolume] = useState(0.3); // Default volume at 30%
+  const [volume, setVolume] = useState(0.5); // Default volume at 50%
   const [isMuted, setIsMuted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true); // Playing by default
+  const [isPlaying, setIsPlaying] = useState(false); // Playing by default
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Only text content moves, background stays fixed
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -44,7 +54,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div ref={containerRef} className="relative">
       {/* Background Audio */}
       <audio
         ref={audioRef}
@@ -59,19 +69,19 @@ export default function Index() {
         Your browser does not support the audio element.
       </audio>
 
-      {/* Background Image */}
+      {/* Fixed Background Image - No Movement */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
           backgroundImage: 'url(/background.png)',
         }}
       >
         {/* Subtle Gradient Overlay - lighter to preserve background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
       </div>
 
-            {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-4 py-4 md:px-12 md:py-8">
+            {/* Fixed Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-4 md:px-12 md:py-8">
         {/* Desktop Audio Controls - Top Left */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -343,80 +353,195 @@ export default function Index() {
         </div>
       </motion.div>
 
-            {/* Main Content - Positioned to avoid center */}
-      <div className="relative z-10 min-h-[calc(100vh-120px)] flex flex-col justify-between md:block">
-        {/* Top Content - Mobile Stacked, Desktop Positioned */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-6 mx-4 md:absolute md:top-20 md:left-12 md:right-auto md:mt-0 md:mx-0 max-w-full md:max-w-md lg:max-w-lg"
+            {/* Storytelling Content Sections */}
+      <div className="relative z-10">
+        {/* Hero Section - Initial View with proper mobile positioning */}
+        <motion.section 
+          style={{ opacity: heroOpacity, scale: heroScale }}
+          className="h-screen flex items-end justify-center pb-20 md:pb-24 pt-20"
         >
-          <div className="bg-black/20 backdrop-blur-md rounded-2xl p-4 md:p-6 lg:p-8 border border-white/10 shadow-2xl">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-3 md:mb-4 leading-tight">
-              Universal WhatsAg
-            </h1>
-            
-            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-4 md:mb-6 font-light leading-relaxed">
-              Where Simplicity Meets Power.
-            </p>
-
-            <p className="text-xs sm:text-sm md:text-base text-white/80 mb-6 md:mb-8 leading-relaxed">
-              Real transformation doesn't start with complexity – it starts with connection. 
-              One chat that grows with you. Personalized, private, and always available.
-            </p>
-
-            <Button
-              size="lg"
-              className="bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg hover:shadow-xl text-sm md:text-base w-full md:w-auto"
+          <div className="w-full px-4 md:px-12 max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="text-center md:text-left"
             >
-              Start Exploring
-            </Button>
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-light text-white mb-4 md:mb-4 leading-tight">
+                Universal WhatsAg
+              </h1>
+              
+              {/* Professional Divider Line */}
+              <div className="flex items-center justify-center md:justify-start mb-6 md:mb-8">
+                <div className="h-px bg-gradient-to-r from-transparent via-white/60 to-transparent w-full max-w-md"></div>
+              </div>
+              
+              <p className="text-base sm:text-lg md:text-2xl text-white/90 font-light leading-relaxed">
+                Where Simplicity Meets Power.
+              </p>
+            </motion.div>
           </div>
-        </motion.div>
+        </motion.section>
 
-        {/* Bottom Content - Mobile Stacked, Desktop Positioned */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-6 mb-20 mx-4 md:absolute md:bottom-16 md:right-12 md:left-auto md:mt-0 md:mb-0 md:mx-0 max-w-full md:max-w-sm lg:max-w-md"
-        >
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/10 shadow-2xl">
-            <p className="text-white/90 text-xs sm:text-sm md:text-base italic leading-relaxed mb-3 md:mb-4">
-              "Universal WhatsAg is your companion for seamless living. 
-              A calm interface to simplify tasks, automate your day, and understand your needs."
-            </p>
-            <p className="text-white/70 text-xs md:text-sm">
-              Less friction. More freedom.
-            </p>
+        {/* Story Section 1 - Connection */}
+        <section className="h-screen flex items-center">
+          <div className="w-full px-4 md:px-12">
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              viewport={{ once: true, amount: 0.2 }}
+              className="max-w-4xl mx-auto text-center"
+            >
+              <div className="bg-black/10 backdrop-blur-md rounded-3xl p-6 md:p-12 border border-white/10 shadow-2xl">
+                <motion.p 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-lg sm:text-xl md:text-3xl text-white/90 font-light leading-relaxed mb-6 md:mb-8"
+                >
+                  Real transformation doesn't start with complexity – it starts with connection.
+                </motion.p>
+                <motion.p 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-sm sm:text-base md:text-xl text-white/80 leading-relaxed"
+                >
+                  One chat that grows with you. Personalized, private, and always available.
+                </motion.p>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </section>
+
+        {/* Story Section 2 - Vision */}
+        <section className="h-screen flex items-center">
+          <div className="w-full px-4 md:px-12">
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              viewport={{ once: true, amount: 0.1 }}
+              className="max-w-5xl mx-auto"
+            >
+              <div className="grid md:grid-cols-2 gap-6 md:gap-12">
+                <motion.div 
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-black/10 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/10 shadow-2xl"
+                >
+                  <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed mb-4 md:mb-6">
+                    We're building the foundation for a fully reliable and personalized Universal Assistant on WhatsApp.
+                  </p>
+                  <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
+                    AI designed for everyday life – helping you navigate the world with ease, through the app you already use.
+                  </p>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="bg-black/5 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/10 shadow-2xl"
+                >
+                  <div className="space-y-3 md:space-y-4 text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
+                    <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.4 }} viewport={{ once: true }}>From reading your emails to planning your next trip.</motion.p>
+                    <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.4 }} viewport={{ once: true }}>From managing routines and nutrition to paying bills and sending invoices.</motion.p>
+                    <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.4 }} viewport={{ once: true }}>Never miss a reminder again.</motion.p>
+                    <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.4 }} viewport={{ once: true }} className="text-white/90 font-medium">It's all possible in a single, smart conversation.</motion.p>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Final Section - CTA with integrated footer */}
+        <section className="h-screen flex flex-col justify-center">
+          <div className="flex-1 flex items-center justify-center px-4 md:px-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              viewport={{ once: true, amount: 0.2 }}
+              className="max-w-3xl mx-auto text-center"
+            >
+              <div className="bg-black/20 backdrop-blur-md rounded-3xl p-6 md:p-12 border border-white/20 shadow-2xl">
+                <motion.blockquote 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-base sm:text-lg md:text-2xl text-white/90 italic leading-relaxed mb-6 md:mb-8"
+                >
+                  "Universal WhatsAg is your companion for seamless living.
+                  A calm interface to simplify tasks, automate your day, and understand your needs with every message."
+                </motion.blockquote>
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-sm sm:text-base md:text-lg text-white/70 mb-8 md:mb-12"
+                >
+                  Less friction. More freedom.
+                </motion.p>
+                
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  viewport={{ once: true }}
+                >
+                  <Button
+                    size="lg"
+                    className="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/30 transition-all duration-500 px-6 py-3 md:px-12 md:py-6 rounded-full shadow-2xl hover:shadow-white/20 text-base md:text-xl font-medium"
+                  >
+                    Start Exploring
+                  </Button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Integrated Footer */}
+          <footer className="relative z-10 py-8 px-4 md:px-12">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+              <motion.p 
+                className="text-white/90 text-xs sm:text-sm md:text-base font-light text-center md:text-left"
+                whileHover={{ scale: 1.02 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                Clarity begins with a great assistant.
+              </motion.p>
+
+              <motion.p 
+                className="text-white/60 text-xs md:text-sm text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                viewport={{ once: true }}
+              >
+                Universal WhatsAg ©2025
+              </motion.p>
+            </div>
+          </footer>
+        </section>
       </div>
 
-            {/* Bottom Footer */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-        className="absolute bottom-2 md:bottom-4 left-0 right-0 px-4 md:px-12 z-10"
-      >
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
-          <motion.p 
-            className="text-white/90 text-xs sm:text-sm md:text-base font-light text-center md:text-left"
-            whileHover={{ scale: 1.02 }}
-          >
-            Clarity begins with a great assistant.
-          </motion.p>
-
-          <p className="text-white/60 text-xs md:text-sm text-center">
-            Universal WhatsAg ©2025
-          </p>
-        </div>
-      </motion.div>
-
-      {/* Enhanced floating particles with shiny effects */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Fixed floating particles with shiny effects */}
+      <div className="fixed inset-0 pointer-events-none z-5">
         {/* Regular floating particles */}
         {[...Array(25)].map((_, i) => (
           <motion.div
